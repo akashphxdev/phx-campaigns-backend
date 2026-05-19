@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react'
 import {
   MdComputer, MdAdd, MdEdit, MdDelete, MdClose, MdCheckCircle,
   MdError, MdAccessTime, MdCampaign, MdKeyboardArrowDown,
-  MdSearch, MdPerson, MdCalendarToday,
+  MdSearch, MdPerson, MdCalendarToday, MdCheckCircleOutline, MdCancel,
 } from 'react-icons/md'
 
 interface Campaign {
@@ -13,22 +13,23 @@ interface Campaign {
 }
 
 interface System {
-  id:                number
-  system_name:       string
-  campaign_id:       number
-  campaign_name:     string
-  avg_time:          number
-  start_datetime:    string | null
-  end_datetime:      string | null
-  is_active:         boolean
-  is_on:             boolean
-  success:           number
-  failed:            number
-  last_req:          string | null
-  last_get_at:       string | null
-  created_by:        number
-  created_by_name:   string
-  created_at:        string
+  id:              number
+  system_name:     string
+  campaign_id:     number
+  campaign_name:   string
+  avg_time:        number
+  start_datetime:  string | null
+  end_datetime:    string | null
+  is_active:       boolean
+  success:         number
+  failed:          number
+  last_req:        string | null
+  last_get_at:     string | null
+  last_success_at: string | null
+  created_by:      number
+  created_by_name: string
+  created_at:      string
+  updated_at:      string
 }
 
 function getNowLocal(): string {
@@ -38,14 +39,6 @@ function getNowLocal(): string {
 }
 
 function formatDatetime(d: string | null) {
-  if (!d) return '—'
-  return new Date(d).toLocaleString('en-IN', {
-    day: '2-digit', month: 'short', year: 'numeric',
-    hour: '2-digit', minute: '2-digit',
-  })
-}
-
-function formatDate(d: string | null) {
   if (!d) return '—'
   return new Date(d).toLocaleString('en-IN', {
     day: '2-digit', month: 'short', year: 'numeric',
@@ -121,7 +114,7 @@ function AddSystemModal({ campaigns, onClose, onSaved }: {
         body: JSON.stringify({
           system_name: systemName.trim(), campaign_id: campaignId,
           avg_time: Number(avgTime), start_datetime: startDatetime || null,
-          end_datetime: endDatetime || null, created_by: 1,
+          end_datetime: endDatetime || null,
         }),
       })
       const data = await res.json()
@@ -154,6 +147,7 @@ function AddSystemModal({ campaigns, onClose, onSaved }: {
               className="w-full border border-slate-200 rounded-lg px-3.5 py-2.5 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
             />
           </div>
+
           <div>
             <label className="text-xs font-medium text-slate-600 block mb-1.5">Campaign <span className="text-red-400">*</span></label>
             <div className="relative" ref={dropdownRef}>
@@ -184,6 +178,7 @@ function AddSystemModal({ campaigns, onClose, onSaved }: {
               )}
             </div>
           </div>
+
           <div>
             <label className="text-xs font-medium text-slate-600 block mb-1.5">Avg Time (minutes) <span className="text-red-400">*</span></label>
             <div className="relative">
@@ -194,11 +189,14 @@ function AddSystemModal({ campaigns, onClose, onSaved }: {
               <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-slate-400">min</span>
             </div>
           </div>
+
           <DateTimeField label="Start Date & Time" sublabel="(optional)" value={startDatetime} onChange={v => { setStartDatetime(v); setError('') }} />
           <DateTimeField label="End Date & Time"   sublabel="(optional)" value={endDatetime}   onChange={v => { setEndDatetime(v);   setError('') }} />
+
           <p className="text-xs text-slate-400 flex items-center gap-1">
-            <MdAccessTime size={12} /> Past dates and times cannot be selected. Leave empty to run without time restriction.
+            <MdAccessTime size={12} /> Past dates cannot be selected. Leave empty to run without time restriction.
           </p>
+
           {error && (
             <div className="flex items-center gap-2 bg-red-50 border border-red-200 rounded-lg px-3 py-2.5">
               <MdError size={14} className="text-red-500 flex-shrink-0" />
@@ -271,6 +269,7 @@ function EditSystemModal({ system, onClose, onSaved }: {
           </div>
           <button onClick={onClose} className="p-1.5 rounded-lg hover:bg-slate-100 text-slate-400 cursor-pointer"><MdClose size={18} /></button>
         </div>
+
         <div className="px-6 py-5 space-y-4">
           <div>
             <label className="text-xs font-medium text-slate-500 block mb-1.5">System ID</label>
@@ -279,6 +278,7 @@ function EditSystemModal({ system, onClose, onSaved }: {
               <span className="text-xs text-slate-400">(read-only)</span>
             </div>
           </div>
+
           <div>
             <label className="text-xs font-medium text-slate-600 block mb-1.5">System Name <span className="text-red-400">*</span></label>
             <input type="text" value={systemName} onChange={e => { setSystemName(e.target.value); setError('') }}
@@ -286,6 +286,7 @@ function EditSystemModal({ system, onClose, onSaved }: {
               className="w-full border border-slate-200 rounded-lg px-3.5 py-2.5 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
             />
           </div>
+
           <div>
             <label className="text-xs font-medium text-slate-600 block mb-1.5">Avg Time (minutes) <span className="text-red-400">*</span></label>
             <div className="relative">
@@ -296,11 +297,14 @@ function EditSystemModal({ system, onClose, onSaved }: {
               <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-slate-400">min</span>
             </div>
           </div>
+
           <DateTimeField label="Start Date & Time" sublabel="(optional)" value={startDatetime} onChange={v => { setStartDatetime(v); setError('') }} />
           <DateTimeField label="End Date & Time"   sublabel="(optional)" value={endDatetime}   onChange={v => { setEndDatetime(v);   setError('') }} />
+
           <p className="text-xs text-slate-400 flex items-center gap-1">
-            <MdAccessTime size={12} /> Past dates and times cannot be selected. Leave empty to run without time restriction.
+            <MdAccessTime size={12} /> Past dates cannot be selected. Leave empty to run without time restriction.
           </p>
+
           {error && (
             <div className="flex items-center gap-2 bg-red-50 border border-red-200 rounded-lg px-3 py-2.5">
               <MdError size={14} className="text-red-500 flex-shrink-0" />
@@ -314,6 +318,7 @@ function EditSystemModal({ system, onClose, onSaved }: {
             </div>
           )}
         </div>
+
         <div className="px-6 py-4 border-t border-slate-100 flex justify-end gap-2 sticky bottom-0 bg-white">
           <button onClick={onClose} className="px-4 py-2 text-sm text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors cursor-pointer">Cancel</button>
           <button onClick={handleSave} disabled={loading}
@@ -351,35 +356,52 @@ function SystemCard({ system, onEdit, onDelete, onToggle, confirmDelete, setConf
               <h3 className="text-sm font-semibold text-white truncate">{system.system_name}</h3>
               <span className="font-mono text-xs text-white/60 flex-shrink-0">#{system.id}</span>
             </div>
-            <div className="flex items-center gap-1 mt-0.5">
-              <MdCampaign size={11} className="text-white/60 flex-shrink-0" />
-              <span className="text-xs text-white/70 truncate">{system.campaign_name ?? '—'}</span>
-            </div>
           </div>
         </div>
         {/* Toggle */}
         <button
           onClick={() => onToggle(system.id, system.is_active)}
           className={`relative inline-flex h-5 w-9 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ${system.is_active ? 'bg-white/30' : 'bg-white/20'}`}
-          title={system.is_active ? 'Active' : 'Inactive'}
+          title={system.is_active ? 'Active — click to deactivate' : 'Inactive — click to activate'}
         >
           <span className={`inline-block h-4 w-4 transform rounded-full bg-white shadow transition-transform duration-200 ${system.is_active ? 'translate-x-4' : 'translate-x-0'}`} />
         </button>
       </div>
 
+      {/* Campaign Strip */}
+      <div className="px-4 pt-3">
+        <div className="flex items-center gap-2 bg-blue-50 border border-blue-100 rounded-lg px-3 py-2">
+          <MdCampaign size={14} className="text-blue-500 flex-shrink-0" />
+          <div className="min-w-0 flex-1">
+            <p className="text-xs font-medium text-blue-700 truncate">{system.campaign_name ?? '—'}</p>
+            <p className="text-xs text-blue-400">Campaign</p>
+          </div>
+        </div>
+      </div>
+
       {/* Body */}
       <div className="px-4 py-3 space-y-3">
-        {/* Detail rows */}
-        <div className="grid grid-cols-2 gap-x-4 gap-y-2.5">
-          <div>
-            <p className="text-xs text-slate-400 mb-0.5">Status</p>
-            <div className="flex items-center gap-1.5">
-              <span className={`w-1.5 h-1.5 rounded-full ${system.is_on ? 'bg-emerald-500' : 'bg-slate-300'}`} />
-              <span className={`text-xs font-medium ${system.is_on ? 'text-emerald-600' : 'text-slate-400'}`}>
-                {system.is_on ? 'Online' : 'Offline'}
-              </span>
+
+        {/* Success / Failed */}
+        <div className="grid grid-cols-2 gap-2">
+          <div className="bg-emerald-50 border border-emerald-100 rounded-lg px-3 py-2 flex items-center gap-2">
+            <MdCheckCircleOutline size={16} className="text-emerald-500 flex-shrink-0" />
+            <div>
+              <p className="text-xs text-emerald-600 font-medium">Success</p>
+              <p className="text-sm font-semibold text-emerald-700">{system.success ?? 0}</p>
             </div>
           </div>
+          <div className="bg-red-50 border border-red-100 rounded-lg px-3 py-2 flex items-center gap-2">
+            <MdCancel size={16} className="text-red-400 flex-shrink-0" />
+            <div>
+              <p className="text-xs text-red-500 font-medium">Failed</p>
+              <p className="text-sm font-semibold text-red-600">{system.failed ?? 0}</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Details grid */}
+        <div className="grid grid-cols-2 gap-x-4 gap-y-2.5">
           <div>
             <p className="text-xs text-slate-400 mb-0.5">Avg Time</p>
             <div className="flex items-center gap-1">
@@ -391,13 +413,27 @@ function SystemCard({ system, onEdit, onDelete, onToggle, confirmDelete, setConf
             <p className="text-xs text-slate-400 mb-0.5">Created By</p>
             <div className="flex items-center gap-1">
               <MdPerson size={12} className="text-slate-400" />
-              <span className="text-xs font-medium text-slate-700">{system.created_by_name ?? '—'}</span>
+              <span className="text-xs font-medium text-slate-700 truncate">{system.created_by_name ?? '—'}</span>
             </div>
           </div>
-          <div>
-            <p className="text-xs text-slate-400 mb-0.5">Last Request</p>
-            <span className="text-xs font-medium text-slate-700">{formatDate(system.last_req)}</span>
+        </div>
+
+        {/* Last Request */}
+        <div className="bg-slate-50 rounded-lg px-3 py-2 flex items-center justify-between gap-2">
+          <div className="flex items-center gap-1.5">
+            <MdAccessTime size={12} className="text-slate-400" />
+            <p className="text-xs text-slate-400">Last Request</p>
           </div>
+          <p className="text-xs font-medium text-slate-600">{formatDatetime(system.last_req)}</p>
+        </div>
+
+        {/* Last Success */}
+        <div className="bg-slate-50 rounded-lg px-3 py-2 flex items-center justify-between gap-2">
+          <div className="flex items-center gap-1.5">
+            <MdCheckCircle size={12} className="text-emerald-400" />
+            <p className="text-xs text-slate-400">Last Success</p>
+          </div>
+          <p className="text-xs font-medium text-slate-600">{formatDatetime(system.last_success_at)}</p>
         </div>
 
         {/* Schedule block */}
@@ -465,25 +501,27 @@ export default function SystemsPage(): React.JSX.Element {
   const [confirmDelete, setConfirmDelete] = useState<number | null>(null)
   const [deletingId,    setDeletingId]    = useState<number | null>(null)
 
-  const fetchSystems = async () => {
-    setLoading(true)
-    try {
-      const res  = await fetch('/api/systems')
-      const data = await res.json()
-      if (data.success) setSystems(data.systems)
-    } catch { /* ignore */ }
-    finally { setLoading(false) }
-  }
+  useEffect(() => {
+    let cancelled = false
 
-  const fetchCampaigns = async () => {
-    try {
-      const res  = await fetch('/api/campaigns')
-      const data = await res.json()
-      if (data.success) setCampaigns(data.campaigns)
-    } catch { /* ignore */ }
-  }
+    const load = async () => {
+      setLoading(true)
+      try {
+        const [sysRes, campRes] = await Promise.all([
+          fetch('/api/systems'),
+          fetch('/api/campaigns'),
+        ])
+        const [sysData, campData] = await Promise.all([sysRes.json(), campRes.json()])
+        if (cancelled) return
+        if (sysData.success)  setSystems(sysData.systems)
+        if (campData.success) setCampaigns(campData.campaigns)
+      } catch { /* ignore */ }
+      finally { if (!cancelled) setLoading(false) }
+    }
 
-  useEffect(() => { fetchSystems(); fetchCampaigns() }, [])
+    load()
+    return () => { cancelled = true }
+  }, [])
 
   const handleDelete = async (id: number) => {
     setDeletingId(id)
@@ -509,11 +547,12 @@ export default function SystemsPage(): React.JSX.Element {
 
   const filtered = systems.filter(s =>
     s.system_name.toLowerCase().includes(search.toLowerCase()) ||
-    s.campaign_name?.toLowerCase().includes(search.toLowerCase())
+    (s.campaign_name ?? '').toLowerCase().includes(search.toLowerCase())
   )
 
-  const totalActive = systems.filter(s => s.is_active).length
-  const totalOn     = systems.filter(s => s.is_on).length
+  const totalActive  = systems.filter(s => s.is_active).length
+  const totalSuccess = systems.reduce((acc, s) => acc + (s.success ?? 0), 0)
+  const totalFailed  = systems.reduce((acc, s) => acc + (s.failed  ?? 0), 0)
 
   return (
     <div className="w-full">
@@ -530,12 +569,13 @@ export default function SystemsPage(): React.JSX.Element {
         </button>
       </div>
 
-      {/* Stats — 3 only, no success/failed/rate */}
-      <div className="grid grid-cols-3 gap-3 mb-6">
+      {/* Stats */}
+      <div className="grid grid-cols-4 gap-3 mb-6">
         {[
-          { label: 'Total Systems', value: systems.length, color: 'text-blue-600',    bg: 'bg-blue-50'    },
-          { label: 'Active',        value: totalActive,    color: 'text-emerald-600', bg: 'bg-emerald-50' },
-          { label: 'Online',        value: totalOn,        color: 'text-violet-600',  bg: 'bg-violet-50'  },
+          { label: 'Total Systems', value: systems.length,  color: 'text-blue-600',    bg: 'bg-blue-50'    },
+          { label: 'Active',        value: totalActive,     color: 'text-violet-600',  bg: 'bg-violet-50'  },
+          { label: 'Total Success', value: totalSuccess,    color: 'text-emerald-600', bg: 'bg-emerald-50' },
+          { label: 'Total Failed',  value: totalFailed,     color: 'text-red-500',     bg: 'bg-red-50'     },
         ].map(s => (
           <div key={s.label} className={`${s.bg} rounded-xl px-4 py-3 flex items-center gap-3`}>
             <p className={`text-2xl font-bold ${s.color}`}>{s.value}</p>
@@ -548,7 +588,7 @@ export default function SystemsPage(): React.JSX.Element {
       <div className="mb-5 relative max-w-xs">
         <MdSearch size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
         <input type="text" value={search} onChange={e => setSearch(e.target.value)}
-          placeholder="Search systems..."
+          placeholder="Search by system or campaign..."
           className="pl-8 pr-4 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all w-full bg-white"
         />
       </div>

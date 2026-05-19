@@ -1,3 +1,4 @@
+// api/live-pcs/route.ts
 import { NextResponse } from 'next/server'
 import db from '@/lib/db'
 
@@ -36,6 +37,7 @@ export async function GET() {
           NULL
         ) as recent_avg_seconds
       FROM systems s
+      WHERE s.is_active = 1
       ORDER BY s.id ASC
     `) as [any[], any]
 

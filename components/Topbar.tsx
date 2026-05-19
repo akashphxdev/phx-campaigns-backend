@@ -50,7 +50,7 @@ const roleLabel: Record<string, string> = {
 export default function Topbar(): React.JSX.Element {
   const path   = usePathname()
   const router = useRouter()
-  const page   = pageTitles[path] ?? { title: 'PHX System', subtitle: 'Phoenix Advanced Softwares Pvt. Ltd' }
+  const page   = pageTitles[path] ?? { title: 'Campaigns Managment', subtitle: 'Phoenix Advanced Softwares Pvt. Ltd' }
 
   const [query,   setQuery]   = useState<string>('')
   const [open,    setOpen]    = useState<boolean>(false)
