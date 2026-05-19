@@ -25,6 +25,7 @@
 //   href:  string
 //   label: string
 //   icon:  React.ReactNode
+//   roles: string[]   // which roles can see this link
 // }
 
 // interface UserInfo {
@@ -35,17 +36,17 @@
 // }
 
 // const links: NavLink[] = [
-//   { href: '/',                label: 'Dashboard',       icon: <MdDashboard          size={18} /> },
-//   { href: '/live-pcs',        label: 'Live PCs',        icon: <MdDesktopWindows     size={18} /> },
-//   { href: '/campaigns',       label: 'Campaigns',       icon: <MdCampaign           size={18} /> },
-//   { href: '/csv-upload',      label: 'CSV Upload',      icon: <MdUploadFile         size={18} /> },
-//   { href: '/images',          label: 'Images',          icon: <MdImage              size={18} /> },
-//   { href: '/systems',         label: 'Systems',         icon: <MdComputer           size={18} /> },
-//   { href: '/system-logs',     label: 'System Logs',     icon: <MdMonitor            size={18} /> },
-//   { href: '/admins',          label: 'Admins',          icon: <MdAdminPanelSettings size={18} /> },
-//   { href: '/admins-activity', label: 'Admins Activity', icon: <MdHistory            size={18} /> },
-//   { href: '/settings',        label: 'Settings',        icon: <MdSettings           size={18} /> },
-//   { href: '/automation-api',  label: 'Automation APIs', icon: <MdMenuBook           size={18} /> },
+//   { href: '/',                label: 'Dashboard',       icon: <MdDashboard          size={18} />, roles: ['superadmin', 'datauploader', 'viewer'] },
+//   { href: '/live-pcs',        label: 'Live PCs',        icon: <MdDesktopWindows     size={18} />, roles: ['superadmin', 'datauploader', 'viewer'] },
+//   { href: '/campaigns',       label: 'Campaigns',       icon: <MdCampaign           size={18} />, roles: ['superadmin', 'datauploader', 'viewer'] },
+//   { href: '/csv-upload',      label: 'CSV Upload',      icon: <MdUploadFile         size={18} />, roles: ['superadmin', 'datauploader', 'viewer'] },
+//   { href: '/images',          label: 'Images',          icon: <MdImage              size={18} />, roles: ['superadmin', 'datauploader', 'viewer'] },
+//   { href: '/systems',         label: 'Systems',         icon: <MdComputer           size={18} />, roles: ['superadmin', 'datauploader', 'viewer'] },
+//   { href: '/system-logs',     label: 'System Logs',     icon: <MdMonitor            size={18} />, roles: ['superadmin', 'datauploader', 'viewer'] },
+//   { href: '/admins',          label: 'Admins',          icon: <MdAdminPanelSettings size={18} />, roles: ['superadmin'] },
+//   { href: '/admins-activity', label: 'Admins Activity', icon: <MdHistory            size={18} />, roles: ['superadmin'] },
+//   { href: '/settings',        label: 'Settings',        icon: <MdSettings           size={18} />, roles: ['superadmin'] },
+//   { href: '/automation-api',  label: 'Automation APIs', icon: <MdMenuBook           size={18} />, roles: ['superadmin', 'datauploader', 'viewer'] },
 // ]
 
 // const roleLabel: Record<string, string> = {
@@ -85,6 +86,11 @@
 //     router.push('/login')
 //   }
 
+//   // Filter links based on user role
+//   const visibleLinks = links.filter(l =>
+//     !user || l.roles.includes(user.role)
+//   )
+
 //   return (
 //     <aside className="fixed left-0 top-0 w-60 h-screen bg-white border-r border-slate-200 flex flex-col z-50">
 
@@ -108,7 +114,7 @@
 
 //       {/* Navigation */}
 //       <nav className="flex-1 min-h-0 px-3 py-3 flex flex-col gap-0.5 overflow-y-auto">
-//         {links.map((l: NavLink) => {
+//         {visibleLinks.map((l: NavLink) => {
 //           const active: boolean = path === l.href
 //           return (
 //             <Link
@@ -177,7 +183,6 @@
 
 
 
-
 // Path: components/Sidebar.tsx
 'use client'
 
@@ -199,13 +204,14 @@ import {
   MdPerson,
   MdRocketLaunch,
   MdDesktopWindows,
+  MdAssessment,
 } from 'react-icons/md'
 
 interface NavLink {
   href:  string
   label: string
   icon:  React.ReactNode
-  roles: string[]   // which roles can see this link
+  roles: string[]
 }
 
 interface UserInfo {
@@ -226,6 +232,7 @@ const links: NavLink[] = [
   { href: '/admins',          label: 'Admins',          icon: <MdAdminPanelSettings size={18} />, roles: ['superadmin'] },
   { href: '/admins-activity', label: 'Admins Activity', icon: <MdHistory            size={18} />, roles: ['superadmin'] },
   { href: '/settings',        label: 'Settings',        icon: <MdSettings           size={18} />, roles: ['superadmin'] },
+  { href: '/reports',         label: 'Reports',         icon: <MdAssessment         size={18} />, roles: ['superadmin'] },
   { href: '/automation-api',  label: 'Automation APIs', icon: <MdMenuBook           size={18} />, roles: ['superadmin', 'datauploader', 'viewer'] },
 ]
 
@@ -266,7 +273,6 @@ export default function Sidebar(): React.JSX.Element {
     router.push('/login')
   }
 
-  // Filter links based on user role
   const visibleLinks = links.filter(l =>
     !user || l.roles.includes(user.role)
   )
