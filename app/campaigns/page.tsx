@@ -1,10 +1,10 @@
-import DashboardPage from '@/components/Dashboard'
+import Campaigns from '@/components/Campaigns'
 import React from 'react'
 
 export default function page() {
   return (
     <div>
-      <DashboardPage/>
+        <Campaigns/>
     </div>
   )
 }

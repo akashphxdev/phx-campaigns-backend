@@ -1,4 +1,4 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+<!-- This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
 ## Getting Started
 
@@ -33,4 +33,74 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details. -->
+
+
+
+
+
+
+# Automation Admin Panel
+
+## Install karo
+
+```bash
+npm install mysql2 csv-parse
+```
+
+## Setup
+
+1. `.env.local.example` ko copy karo `.env.local` naam se
+2. Apna MySQL password daalo
+
+## Chalao
+
+```bash
+npm run dev
+```
+
+## Pehli baar — Tables banao
+
+Browser mein kholو:
+```
+http://localhost:3000/api/setup
+```
+
+## Files structure
+
+```
+lib/db.js                              ← MySQL connection
+app/api/setup/route.js                 ← Tables create
+app/api/upload-csv/route.js            ← CSV upload
+app/api/jobs/route.js                  ← Jobs list + PC fetch
+app/api/jobs/[id]/status/route.js      ← Status update
+app/api/machines/route.js              ← PC register/list
+app/api/dashboard/route.js             ← Stats
+app/dashboard/page.jsx                 ← Dashboard UI
+app/dashboard/upload/page.jsx          ← Upload UI
+app/dashboard/jobs/page.jsx            ← Jobs UI
+app/dashboard/machines/page.jsx        ← Machines UI
+components/Sidebar.jsx                 ← Navigation
+```
+
+## PC (Automation) side — API kaise use karein
+
+### Pending jobs lo
+```
+GET /api/jobs
+Header: x-api-token: YOUR_TOKEN
+```
+
+### Job complete karo
+```
+PATCH /api/jobs/123/status
+Header: x-api-token: YOUR_TOKEN
+Body: { "status": "done" }
+```
+
+### Job fail karo
+```
+PATCH /api/jobs/123/status
+Header: x-api-token: YOUR_TOKEN  
+Body: { "status": "failed", "error_msg": "Kya error aayi" }
+```

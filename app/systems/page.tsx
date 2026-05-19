@@ -1,10 +1,10 @@
-import DashboardPage from '@/components/Dashboard'
+import SystemPage from '@/components/SystemPage'
 import React from 'react'
 
 export default function page() {
   return (
     <div>
-      <DashboardPage/>
+        <SystemPage/>
     </div>
   )
 }

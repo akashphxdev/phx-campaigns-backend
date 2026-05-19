@@ -1,10 +1,9 @@
-import DashboardPage from '@/components/Dashboard'
 import React from 'react'
-
+import Images from '@/components/Images'
 export default function page() {
   return (
     <div>
-      <DashboardPage/>
+        <Images/>
     </div>
   )
 }

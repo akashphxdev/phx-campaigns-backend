@@ -1,10 +1,9 @@
-import DashboardPage from '@/components/Dashboard'
 import React from 'react'
-
+import CsvUpload from '@/components/CsvUpload'
 export default function page() {
   return (
     <div>
-      <DashboardPage/>
+        <CsvUpload />
     </div>
   )
 }
